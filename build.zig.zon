@@ -1,0 +1,22 @@
+.{
+    .authors = .{
+        "Matt Wilson <matthew@synesis.com.au>",
+    },
+    .description = "Minimal ANSI terminal colour codes, for Zig",
+    .fingerprint = 0xa21e34833b201d51,
+    .name = .woad,
+    .paths = .{
+        "AUTHORS.md",
+        "CHANGES.md",
+        "EXAMPLES.md",
+        "LICENSE",
+        "NEWS.md",
+        "README.md",
+        "TODO.md",
+        "build.zig",
+        "build.zig.zon",
+        "examples",
+        "src",
+    },
+    .version = "0.0.1",
+}
