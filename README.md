@@ -14,6 +14,7 @@ Minimal ANSI terminal colour codes, for Zig
 - [Introduction](#introduction)
 - [Installation](#installation)
 - [Components](#components)
+- [Examples](#examples)
 - [Project Information](#project-information)
   - [Where to get help](#where-to-get-help)
   - [Contribution guidelines](#contribution-guidelines)
@@ -68,10 +69,23 @@ exe.root_module.addImport("woad", woad_dep.module("woad"));
 const std = @import("std");
 const woad = @import("woad");
 
-pub fn main() !void {
-    const stdout = std.io.getStdOut().writer();
+pub fn main(init: std.process.Init) !void {
+    var buffer: [256]u8 = undefined;
+    var stdout_impl = std.Io.File.stdout().writer(init.io, &buffer);
+    const stdout = &stdout_impl.interface;
+
     try stdout.print("{s}ok{s}\n", .{ woad.FG_GREEN, woad.RESET });
+    try stdout.flush();
 }
+```
+
+
+## Examples
+
+See [EXAMPLES.md](./EXAMPLES.md). Run the sample with:
+
+```bash
+zig build run-example
 ```
 
 
@@ -110,6 +124,7 @@ None (currently).
 
 * [**woad**](https://github.com/synesissoftware/woad/)
 * [**woad.Go**](https://github.com/synesissoftware/woad.Go/)
+* [**woad.NET**](https://github.com/synesissoftware/woad.NET/)
 * [**woad.Python**](https://github.com/synesissoftware/woad.Python/)
 * [**woad.Ruby**](https://github.com/synesissoftware/woad.Ruby/)
 * [**woad.Rust**](https://github.com/synesissoftware/woad.Rust/)

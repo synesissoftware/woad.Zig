@@ -1,6 +1,13 @@
 # woad.Zig - TODO <!-- omit in toc -->
 
 
+## Table of Contents <!-- omit in toc -->
+
+- [Functional improvements](#functional-improvements)
+- [Performance improvements](#performance-improvements)
+- [Packaging improvements](#packaging-improvements)
+
+
 ## Functional improvements
 
 * [x] ~~~SGR colour and reset codes~~~ - ✅;
@@ -10,12 +17,12 @@
 
 ## Performance improvements
 
-* \<none>
+* \<none
 
 
 ## Packaging improvements
 
-* \<none>
+* \<none
 
 
 <!-- ########################### end of file ########################### -->
