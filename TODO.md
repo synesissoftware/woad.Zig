@@ -11,8 +11,8 @@
 ## Functional improvements
 
 * [x] ~~~SGR colour and reset codes~~~ - ✅;
-* [ ] TTY-conditional colour codes (process and per-stream);
-* [ ] Windows virtual-terminal gating (OS build + `GetConsoleMode`);
+* [x] ~~~TTY-conditional colour codes (process and per-stream)~~~ - ✅;
+* [ ] Windows virtual-terminal gating (OS build + `GetConsoleMode`), `WOAD_SET_CONSOLE_MODE`, and mintty recognition (not in **0.1.0-alpha1**);
 
 
 ## Performance improvements

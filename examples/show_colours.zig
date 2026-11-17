@@ -1,6 +1,15 @@
 const std = @import("std");
 const woad = @import("woad");
 
+/// Prints `text` wrapped in `seq` only when `writer` supports colour.
+fn paint(writer: *std.Io.Writer, seq: []const u8, text: []const u8) !void {
+    try writer.print("  {s}{s}{s}\n", .{
+        woad.seqFor(seq, writer),
+        text,
+        woad.seqFor(woad.RESET, writer),
+    });
+}
+
 pub fn main(init: std.process.Init) !void {
     var buffer: [4096]u8 = undefined;
     var stdout_impl = std.Io.File.stdout().writer(init.io, &buffer);
@@ -8,35 +17,42 @@ pub fn main(init: std.process.Init) !void {
 
     try stdout.print("woad.Zig version: {s}\n\n", .{woad.VERSION});
 
+    try stdout.print("{s}ok{s}\n\n", .{
+        woad.seqFor(woad.FG_GREEN, stdout),
+        woad.seqFor(woad.RESET, stdout),
+    });
+
     try stdout.print("Standard foreground colours:\n", .{});
-    try stdout.print("  {s}Black{s}\n", .{ woad.FG_BLACK, woad.RESET });
-    try stdout.print("  {s}Red{s}\n", .{ woad.FG_RED, woad.RESET });
-    try stdout.print("  {s}Green{s}\n", .{ woad.FG_GREEN, woad.RESET });
-    try stdout.print("  {s}Yellow{s}\n", .{ woad.FG_YELLOW, woad.RESET });
-    try stdout.print("  {s}Blue{s}\n", .{ woad.FG_BLUE, woad.RESET });
-    try stdout.print("  {s}Magenta{s}\n", .{ woad.FG_MAGENTA, woad.RESET });
-    try stdout.print("  {s}Cyan{s}\n", .{ woad.FG_CYAN, woad.RESET });
-    try stdout.print("  {s}White{s}\n\n", .{ woad.FG_WHITE, woad.RESET });
+    try paint(stdout, woad.FG_BLACK, "Black");
+    try paint(stdout, woad.FG_RED, "Red");
+    try paint(stdout, woad.FG_GREEN, "Green");
+    try paint(stdout, woad.FG_YELLOW, "Yellow");
+    try paint(stdout, woad.FG_BLUE, "Blue");
+    try paint(stdout, woad.FG_MAGENTA, "Magenta");
+    try paint(stdout, woad.FG_CYAN, "Cyan");
+    try paint(stdout, woad.FG_WHITE, "White");
+    try stdout.print("\n", .{});
 
     try stdout.print("Bright foreground colours:\n", .{});
-    try stdout.print("  {s}Bright Black{s}\n", .{ woad.FG_BRIGHT_BLACK, woad.RESET });
-    try stdout.print("  {s}Bright Red{s}\n", .{ woad.FG_BRIGHT_RED, woad.RESET });
-    try stdout.print("  {s}Bright Green{s}\n", .{ woad.FG_BRIGHT_GREEN, woad.RESET });
-    try stdout.print("  {s}Bright Yellow{s}\n", .{ woad.FG_BRIGHT_YELLOW, woad.RESET });
-    try stdout.print("  {s}Bright Blue{s}\n", .{ woad.FG_BRIGHT_BLUE, woad.RESET });
-    try stdout.print("  {s}Bright Magenta{s}\n", .{ woad.FG_BRIGHT_MAGENTA, woad.RESET });
-    try stdout.print("  {s}Bright Cyan{s}\n", .{ woad.FG_BRIGHT_CYAN, woad.RESET });
-    try stdout.print("  {s}Bright White{s}\n\n", .{ woad.FG_BRIGHT_WHITE, woad.RESET });
+    try paint(stdout, woad.FG_BRIGHT_BLACK, "Bright Black");
+    try paint(stdout, woad.FG_BRIGHT_RED, "Bright Red");
+    try paint(stdout, woad.FG_BRIGHT_GREEN, "Bright Green");
+    try paint(stdout, woad.FG_BRIGHT_YELLOW, "Bright Yellow");
+    try paint(stdout, woad.FG_BRIGHT_BLUE, "Bright Blue");
+    try paint(stdout, woad.FG_BRIGHT_MAGENTA, "Bright Magenta");
+    try paint(stdout, woad.FG_BRIGHT_CYAN, "Bright Cyan");
+    try paint(stdout, woad.FG_BRIGHT_WHITE, "Bright White");
+    try stdout.print("\n", .{});
 
     try stdout.print("Background colours:\n", .{});
-    try stdout.print("  {s} Black {s}\n", .{ woad.BG_BLACK, woad.RESET });
-    try stdout.print("  {s} Red {s}\n", .{ woad.BG_RED, woad.RESET });
-    try stdout.print("  {s} Green {s}\n", .{ woad.BG_GREEN, woad.RESET });
-    try stdout.print("  {s} Yellow {s}\n", .{ woad.BG_YELLOW, woad.RESET });
-    try stdout.print("  {s} Blue {s}\n", .{ woad.BG_BLUE, woad.RESET });
-    try stdout.print("  {s} Magenta {s}\n", .{ woad.BG_MAGENTA, woad.RESET });
-    try stdout.print("  {s} Cyan {s}\n", .{ woad.BG_CYAN, woad.RESET });
-    try stdout.print("  {s} White {s}\n", .{ woad.BG_WHITE, woad.RESET });
+    try paint(stdout, woad.BG_BLACK, " Black ");
+    try paint(stdout, woad.BG_RED, " Red ");
+    try paint(stdout, woad.BG_GREEN, " Green ");
+    try paint(stdout, woad.BG_YELLOW, " Yellow ");
+    try paint(stdout, woad.BG_BLUE, " Blue ");
+    try paint(stdout, woad.BG_MAGENTA, " Magenta ");
+    try paint(stdout, woad.BG_CYAN, " Cyan ");
+    try paint(stdout, woad.BG_WHITE, " White ");
 
     try stdout.flush();
 }
