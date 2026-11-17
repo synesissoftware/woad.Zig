@@ -4,12 +4,39 @@
 //! library authors. It is not a console or TUI framework.
 
 /// Package version.
-pub const VERSION = "0.0.1";
+pub const VERSION = "0.1.0-alpha1";
 
-// Reset
+const policy = @import("policy.zig");
+
+/// Prevailing colour policy. Discriminants are the **woad** 0.3.0 values.
+pub const ColourPolicy = policy.ColourPolicy;
+
+/// Prevailing colour policy, cached until `refresh`.
+pub const colourPolicy = policy.colourPolicy;
+
+/// Whether `writer` is a file writer the standard library reports as a
+/// terminal. This does not apply the colour policy.
+pub const isTty = policy.isTty;
+
+/// Drops the cached policy and the cached `TERM=dumb` flag.
+pub const refresh = policy.refresh;
+
+/// `seq` when `supportsColour` is true for `writer`, otherwise `""`.
+pub const seqFor = policy.seqFor;
+
+/// Whether colour should be emitted for `writer`.
+pub const supportsColour = policy.supportsColour;
+
+// Reset and attributes
 
 /// Reset all attributes.
 pub const RESET = "\x1b[0m";
+
+/// Bold (SGR 1).
+pub const BOLD = "\x1b[1m";
+
+/// Blinking (SGR 5).
+pub const BLINKING = "\x1b[5m";
 
 // Foreground (standard)
 
@@ -90,12 +117,18 @@ pub const BG_BRIGHT_WHITE = "\x1b[107m";
 const std = @import("std");
 const testing = std.testing;
 
-test "version" {
-    try testing.expectEqualStrings("0.0.1", VERSION);
+test {
+    _ = @import("policy.zig");
 }
 
-test "reset code" {
+test "version" {
+    try testing.expectEqualStrings("0.1.0-alpha1", VERSION);
+}
+
+test "reset and attribute codes" {
     try testing.expectEqualStrings("\x1b[0m", RESET);
+    try testing.expectEqualStrings("\x1b[1m", BOLD);
+    try testing.expectEqualStrings("\x1b[5m", BLINKING);
 }
 
 test "foreground standard codes" {
@@ -145,6 +178,8 @@ test "background bright codes" {
 test "all codes are CSI SGR" {
     const codes = [_][]const u8{
         RESET,
+        BOLD,
+        BLINKING,
         FG_BLACK,
         FG_RED,
         FG_GREEN,

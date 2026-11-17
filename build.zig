@@ -41,7 +41,11 @@ pub fn build(b: *std.Build) void {
     b.installArtifact(example);
 
     const run_example = b.addRunArtifact(example);
-    if (b.args) |args| {
+    // Zig 0.17 forwards `zig build run -- …` through `addPassthruArgs`.
+    // Zig 0.16 still exposes those arguments as `b.args`.
+    if (comptime @hasDecl(std.Build.Step.Run, "addPassthruArgs")) {
+        run_example.addPassthruArgs();
+    } else if (b.args) |args| {
         run_example.addArgs(args);
     }
 

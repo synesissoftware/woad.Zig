@@ -12,6 +12,7 @@ Minimal ANSI terminal colour codes, for Zig
 ## Table of Contents <!-- omit in toc -->
 
 - [Introduction](#introduction)
+- [Developer Experience](#developer-experience)
 - [Installation](#installation)
 - [Components](#components)
 - [Examples](#examples)
@@ -33,6 +34,39 @@ Minimal ANSI terminal colour codes, for Zig
 **woad.Zig** is the **Zig** implementation.
 
 
+## Developer Experience
+
+**woad.Zig** builds with Zig **0.17.1**. It has no dependencies.
+
+```bash
+zig build test
+zig build run-example
+```
+
+The smallest useful call emits a sequence only when the writer supports colour:
+
+```zig
+const std = @import("std");
+const woad = @import("woad");
+
+pub fn main(init: std.process.Init) !void {
+    var buffer: [256]u8 = undefined;
+    var stdout_impl = std.Io.File.stdout().writer(init.io, &buffer);
+    const stdout = &stdout_impl.interface;
+
+    try stdout.print("{s}ok{s}\n", .{
+        woad.seqFor(woad.FG_GREEN, stdout),
+        woad.seqFor(woad.RESET, stdout),
+    });
+    try stdout.flush();
+}
+```
+
+That is the opening of [examples/show_colours.zig](./examples/show_colours.zig). Every swatch in that program goes through `seqFor` as well. Fixed sequences (`BOLD`, `BLINKING`, `FG_*`, `BG_*`) always contain the SGR bytes. `colourPolicy`, `supportsColour`, and `seqFor` apply the cached environment policy. `isTty` reports attachment only. `refresh` drops that cache.
+
+On Unix a terminal supports colour when the policy is automatic and `TERM` is not `dumb`. Windows virtual-terminal mode and mintty recognition are not implemented.
+
+
 ## Installation
 
 Add **woad.Zig** to your `build.zig.zon`:
@@ -43,7 +77,7 @@ Add **woad.Zig** to your `build.zig.zon`:
     .version = "0.1.0",
     .dependencies = .{
         .woad = .{
-            .url = "https://github.com/synesissoftware/woad.Zig/archive/refs/tags/0.0.1.tar.gz",
+            .url = "https://github.com/synesissoftware/woad.Zig/archive/refs/tags/0.1.0-alpha1.tar.gz",
             // .hash = "...",
         },
     },
@@ -63,7 +97,7 @@ exe.root_module.addImport("woad", woad_dep.module("woad"));
 
 ## Components
 
-**woad.Zig** ships SGR string constants (`RESET`, `FG_*`, `BG_*`, including bright variants) and `VERSION`. TTY/stream gating and Windows virtual-terminal opt-in are not implemented yet.
+**woad.Zig** ships fixed SGR sequences (`BLINKING`, `BOLD`, `RESET`, `FG_*`, `BG_*`, including bright variants), `VERSION`, and the portable colour policy: `colourPolicy`, `refresh`, `isTty`, `supportsColour`, and `seqFor`. On Unix a terminal supports colour when the policy is automatic and `TERM` is not `dumb`. Windows virtual-terminal gating, `WOAD_SET_CONSOLE_MODE`, and mintty recognition are not implemented.
 
 ```zig
 const std = @import("std");
@@ -74,7 +108,10 @@ pub fn main(init: std.process.Init) !void {
     var stdout_impl = std.Io.File.stdout().writer(init.io, &buffer);
     const stdout = &stdout_impl.interface;
 
-    try stdout.print("{s}ok{s}\n", .{ woad.FG_GREEN, woad.RESET });
+    try stdout.print("{s}ok{s}\n", .{
+        woad.seqFor(woad.FG_GREEN, stdout),
+        woad.seqFor(woad.RESET, stdout),
+    });
     try stdout.flush();
 }
 ```
