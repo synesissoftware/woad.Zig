@@ -51,7 +51,7 @@ jobs:
           version: 0.17.1
 
       - name: Run Unit Tests
-        run: zig build test --global-cache-dir .zig-cache
+        run: zig build test
 
       - name: Run Example
-        run: zig build run-example --global-cache-dir .zig-cache
+        run: zig build run-example
